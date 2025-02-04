@@ -36,3 +36,12 @@ function createBalloon() {
 
 // Generate balloons every 1.5 seconds instead of 1 second
 setInterval(createBalloon, 1500);
+
+function toggleMusic() {
+    const music = document.getElementById("backgroundMusic");
+    if (music.paused) {
+        music.play();
+    } else {
+        music.pause();
+    }
+}
