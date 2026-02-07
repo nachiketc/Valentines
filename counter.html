@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Time Together ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
 </head>
-<body onload="updateDaysCounter()">
+<body onload="updateDaysCounter()" class="counter-page">
     <div class="container">
-        <h1>Our Beautiful Journey ❤️</h1>
-        <p id="daysCounter">Loading...</p>
+        <div class="text-page-container">
+            <h1 class="pixel-text">Our Beautiful Journey ❤️</h1>
+            <p id="daysCounter" class="pixel-text">Loading...</p>
+            <div class="gif-container" style="margin-top: 30px;">
+                <img src="swing-grey-cat.gif" alt="Swing Grey Cat" class="pixel-image">
+            </div>
+        </div>
         <div class="buttons">
-            <button class="button" onclick="goToPage('collage.html')">Next 💖</button>
+            <a href="index.html" class="button">Back</a>
+            <a href="text.html" class="button">Next</a>
         </div>
     </div>
 </body>

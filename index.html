@@ -3,18 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Will You Be My Valentine?</title>
+    <title>Will You Be My Valentine? ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-
 </head>
-<body>
-    <div class="container">
-        <h1>Will You Be My Valentine? ❤️</h1>
-        <div class="buttons">
-            <button id="yesButton" onclick="startConfetti(); goToPage('counter.html')">Yes 💕</button>
-            <button id="noButton">No 😢</button>
+<body class="landing">
+    <!-- Optional: Envelope Interaction (inspired by valentine-ask) -->
+    <!-- Uncomment the envelope-container div below and hide the card initially to enable envelope interaction -->
+    <!--
+    <div id="envelope-container">
+        <img src="envelope.png" alt="Envelope" id="envelope" />
+        <p>♡ Letter for You ♡</p>
+    </div>
+    -->
+    
+    <div class="container index-page">
+        <div class="card">
+            <h1 class="proposal-title">Will You Be My Valentine?</h1>
+            <img src="cat_heart.gif" class="cat pixel-image" alt="Cat with heart" style="width: 150px; margin: 10px 0;" />
+            <div class="buttons">
+                <img src="yes.png" id="yesButton" class="btn btn-yes pixel-image" alt="Yes" onclick="startConfetti(); goToPage('counter.html')" />
+                <div class="no-wrapper">
+                    <img src="no.png" id="noButton" class="btn btn-no pixel-image" alt="No" />
+                </div>
+            </div>
         </div>
     </div>
 </body>

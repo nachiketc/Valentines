@@ -1,3 +1,71 @@
+// Valentine's Week: 7 days before Feb 14 (Feb 7–13) + Valentine's Day (Feb 14)
+const VALENTINES_WEEK = [
+    { name: "Rose Day", date: 7, emoji: "🌹", tagline: "A rose for you" },
+    { name: "Propose Day", date: 8, emoji: "💍", tagline: "Will you be mine?" },
+    { name: "Chocolate Day", date: 9, emoji: "🍫", tagline: "Sweet like you" },
+    { name: "Teddy Day", date: 10, emoji: "🧸", tagline: "Hugs & cuddles" },
+    { name: "Promise Day", date: 11, emoji: "🤝", tagline: "Forever with you" },
+    { name: "Hug Day", date: 12, emoji: "🤗", tagline: "Warm embrace" },
+    { name: "Kiss Day", date: 13, emoji: "💋", tagline: "All my love" },
+    { name: "Valentine's Day", date: 14, emoji: "❤️", tagline: "Happy Valentine's!" }
+];
+
+function getValentinesWeekContext() {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentDay = now.getDate();
+    const currentYear = now.getFullYear();
+
+    // Valentine's Day for this year (Feb 14)
+    const valentinesDate = new Date(currentYear, 1, 14);
+    const today = new Date(currentYear, currentMonth, currentDay);
+    
+    // Calculate days until Valentine's Day
+    let daysUntil = Math.ceil((valentinesDate - now) / (1000 * 60 * 60 * 24));
+    
+    // Calculate which day of Valentine's Week we're in (or would be)
+    let currentDayInfo = null;
+    let isValentinesWeek = false;
+    let nextDayInfo = null;
+    let daysUntilNextDay = null;
+
+    // If we're in February
+    if (currentMonth === 1) {
+        if (currentDay >= 7 && currentDay <= 14) {
+            // We're in Valentine's Week
+            isValentinesWeek = true;
+            currentDayInfo = VALENTINES_WEEK[Math.min(currentDay - 7, 7)];
+        } else if (currentDay < 7) {
+            // Before Valentine's Week - show next day
+            nextDayInfo = VALENTINES_WEEK[0]; // Rose Day
+            daysUntilNextDay = 7 - currentDay;
+        } else if (currentDay > 14) {
+            // After Valentine's Day - show Valentine's Day info
+            currentDayInfo = VALENTINES_WEEK[7]; // Valentine's Day
+        }
+    } else if (currentMonth < 1) {
+        // Before February - show Rose Day (first day)
+        nextDayInfo = VALENTINES_WEEK[0];
+        const daysUntilFeb = Math.ceil((new Date(currentYear, 1, 7) - now) / (1000 * 60 * 60 * 24));
+        daysUntilNextDay = daysUntilFeb;
+    } else {
+        // After February - show Valentine's Day for next year
+        const nextYearValentines = new Date(currentYear + 1, 1, 14);
+        daysUntil = Math.ceil((nextYearValentines - now) / (1000 * 60 * 60 * 24));
+        currentDayInfo = VALENTINES_WEEK[7]; // Valentine's Day
+    }
+
+    return {
+        isValentinesWeek,
+        currentDayInfo,
+        nextDayInfo,
+        daysUntil: Math.max(0, daysUntil),
+        daysUntilNextDay,
+        isValentinesDay: currentMonth === 1 && currentDay === 14,
+        valentinesDate
+    };
+}
+
 function goToPage(page) {
     document.body.classList.add("fade-out");
     setTimeout(() => {
@@ -9,9 +77,21 @@ function goBack() {
     window.history.back();
 }
 
-document.getElementById("yesButton").addEventListener("click", function() {
-    document.getElementById("messages").innerHTML = "Yay! Can't wait to spend Valentine's Day with you! ❤️";
-    startConfetti();
+var yesBtn = document.getElementById("yesButton");
+if (yesBtn) {
+    yesBtn.addEventListener("click", function() {
+        var messages = document.getElementById("messages");
+        if (messages) messages.innerHTML = "Yay! Can't wait to spend Valentine's Day with you! ❤️";
+        startConfetti();
+    });
+}
+
+// Handle pixel art button clicks (for image buttons)
+document.addEventListener("DOMContentLoaded", function() {
+    var yesImgBtn = document.getElementById("yesButton");
+    if (yesImgBtn && yesImgBtn.tagName === "IMG") {
+        yesImgBtn.style.cursor = "pointer";
+    }
 });
 
 // Confetti Effect
@@ -20,7 +100,7 @@ function startConfetti() {
         particleCount: 200,
         spread: 100,
         origin: { y: 0.6 },
-        colors: ['#ff758c', '#ff7eb3', '#ff4081', '#ff1744']
+        colors: ['#E91E63', '#F48FB1', '#F8BBD9', '#AD1457', '#FF80AB']
     });
 }
 
@@ -53,30 +133,100 @@ function updateDaysCounter() {
         years -= 1;
     }
 
-    let timeText = `${months} months, ${days} days, ${hours} hours, ${minutes} minutes ❤️`;
+    // Fix singular/plural
+    const yearText = years === 1 ? "year" : "years";
+    const monthText = months === 1 ? "month" : "months";
+    const dayText = days === 1 ? "day" : "days";
+    
+    let timeText = `${months} ${monthText} ${days} ${dayText} `;
     if (years > 0) {
-        timeText = `${years} years, ` + timeText;
+        timeText = `${years} ${yearText} ${months} ${monthText} ${days} ${dayText} `;
     }
 
-    document.getElementById("daysCounter").innerText = `It's been ${timeText} \n since we got together! ❤️`;
+    document.getElementById("daysCounter").innerHTML = `It's been<br><span class="counter-numbers">${timeText}</span><br>since we got together! `;
 }
 
 
 
-// No Button Behavior
+// Valentine's Week landing: set day badge only (runs on index.html)
 document.addEventListener("DOMContentLoaded", function () {
-    let noButton = document.getElementById("noButton");
-    let movedOnce = false;
-
-    noButton.addEventListener("mouseover", function () {
-        if (!movedOnce) {
-            noButton.innerText = "Are you sure? 😢";
-            movedOnce = true;
+    var badgeEl = document.getElementById("dayBadge");
+    if (badgeEl) {
+        var ctx = getValentinesWeekContext();
+        if (ctx.isValentinesDay) {
+            badgeEl.textContent = "Happy Valentine's Day!";
+        } else if (ctx.currentDayInfo) {
+            badgeEl.textContent = "Today is " + ctx.currentDayInfo.name + " " + ctx.currentDayInfo.emoji;
         } else {
-            let x = Math.random() * (window.innerWidth - 100);
-            let y = Math.random() * (window.innerHeight - 50);
-            noButton.style.left = `${x}px`;
-            noButton.style.top = `${y}px`;
+            badgeEl.textContent = "Valentine's Week";
+        }
+    }
+    // Day page: always show Rose Day for now
+    var dayTitleEl = document.getElementById("dayTitle");
+    if (dayTitleEl) {
+        var emojiEl = document.getElementById("dayEmoji");
+        // Always Rose Day
+        emojiEl.textContent = "🌹";
+        dayTitleEl.textContent = "Rose Day";
+        document.title = "Rose Day";
+    }
+});
+
+// No button: starts aligned with Yes; on first hover move to overlay and animate away
+var NO_BUTTON_MESSAGES = [
+    "Really? No?",
+    "Try again!",
+    "Say yes please!",
+    "You don't mean that!",
+    "Wrong answer — try Yes",
+    "Pretty please?",
+    "I'll make it worth it",
+    "Not that one!",
+    "Yes is over here",
+    "Nope, pick Yes!",
+    "One more chance?"
+];
+document.addEventListener("DOMContentLoaded", function () {
+    var noButton = document.getElementById("noButton");
+    if (!noButton) return;
+    var msgIndex = 0;
+    var padding = 80;
+    var inOverlay = false;
+    var overlay = null;
+
+    function getRandomPosition() {
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        var left = padding + Math.random() * (w - 2 * padding - 120);
+        var top = padding + Math.random() * (h - 2 * padding - 50);
+        return { left: left, top: top };
+    }
+
+    noButton.addEventListener("mouseenter", function () {
+        // For image buttons, we don't change text, just move them
+        msgIndex++;
+        if (!inOverlay) {
+            inOverlay = true;
+            var rect = noButton.getBoundingClientRect();
+            overlay = document.createElement("div");
+            overlay.className = "no-button-wrapper";
+            document.body.appendChild(overlay);
+            overlay.appendChild(noButton);
+            noButton.classList.add("moved");
+            noButton.style.transition = "none";
+            noButton.style.left = rect.left + "px";
+            noButton.style.top = rect.top + "px";
+            noButton.offsetHeight; // reflow
+            noButton.style.transition = "";
+            requestAnimationFrame(function () {
+                var pos = getRandomPosition();
+                noButton.style.left = pos.left + "px";
+                noButton.style.top = pos.top + "px";
+            });
+        } else {
+            var pos = getRandomPosition();
+            noButton.style.left = pos.left + "px";
+            noButton.style.top = pos.top + "px";
         }
     });
 });
@@ -149,6 +299,29 @@ document.addEventListener("DOMContentLoaded", function () {
         document.addEventListener("keydown", function (e) {
             if (e.key === "ArrowLeft" && player.x > 0) player.x -= 20;
             if (e.key === "ArrowRight" && player.x < canvas.width - player.width) player.x += 20;
+        });
+    }
+});
+
+// Envelope Interaction (Optional - inspired by valentine-ask)
+// Uncomment and enable in HTML to use envelope interaction
+document.addEventListener("DOMContentLoaded", function () {
+    const envelope = document.getElementById("envelope-container");
+    const card = document.querySelector(".card");
+    
+    if (envelope) {
+        envelope.addEventListener("click", () => {
+            envelope.style.display = "none";
+            if (card) {
+                card.style.display = "block";
+                card.style.opacity = "0";
+                card.style.transform = "scale(1.2)";
+                setTimeout(() => {
+                    card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+                    card.style.opacity = "1";
+                    card.style.transform = "scale(1)";
+                }, 50);
+            }
         });
     }
 });

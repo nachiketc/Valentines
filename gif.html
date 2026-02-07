@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GIFs for You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Some Cute GIFs for You!</h1>
+        <a href="index.html" class="back-link">Back</a>
+        <h1 class="pixel-text">Some Cute GIFs for You!</h1>
         <div class="gif-container">
             <img src="4.gif" alt="Cute GIF 1">
             <img src="gif2.gif" alt="Cute GIF 2">
         </div>
-        <button class="button" onclick="goBack()">⬅️</button>
-        <button class="button" onclick="goToPage('text.html')"> ➡️</button>
+        <a href="text.html" class="button">Next</a>
     </div>
     <script defer src="script.js"></script>
 </body>
