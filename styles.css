@@ -15,11 +15,8 @@ body {
 }
 
 body.landing {
-    /* Pixel art background - matching valentine-ask */
-    background-image: url("heart-bg.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    /* Off-white background */
+    background-color: #FFF8F0;
     color: #880E4F;
 }
 
@@ -247,16 +244,21 @@ body.landing #yesButton {
     width: 90vw;
     max-width: 600px;
     min-height: 500px;
-    padding: 40px;
+    padding: 60px 40px 40px 40px; /* More top padding for mobile */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     margin: 2rem auto;
     overflow-y: auto;
-    max-height: 80vh;
+    max-height: 85vh;
     box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+.text-page-container h1 {
+    margin-top: 0;
+    padding-top: 0;
 }
 
 /* Better centering for counter page */
