@@ -9,8 +9,8 @@ const DAY_GAMES = {
     },
     8: { // Propose Day
         name: "Find the Ring",
-        description: "Click on the hidden ring to find it!",
-        type: "find",
+        description: "Click the tiles to find the hidden ring!",
+        type: "find-ring",
         emoji: "💍"
     },
     9: { // Chocolate Day
@@ -51,13 +51,48 @@ const DAY_GAMES = {
     }
 };
 
-// Initialize game - always Rose Day for now
+// Get day number from URL parameter or current date
+function getDayFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dayParam = urlParams.get('day');
+    if (dayParam) {
+        const dayNum = parseInt(dayParam);
+        if (dayNum >= 7 && dayNum <= 14) {
+            return dayNum;
+        }
+    }
+    return null;
+}
+
+// Get current day number
+function getCurrentDayNumber() {
+    const urlDay = getDayFromURL();
+    if (urlDay) {
+        return urlDay;
+    }
+    
+    const ctx = getValentinesWeekContext();
+    if (ctx.currentDayInfo) {
+        const dayIndex = VALENTINES_WEEK.findIndex(day => day.name === ctx.currentDayInfo.name);
+        if (dayIndex !== -1) {
+            return dayIndex + 7; // Days start at 7
+        }
+    }
+    
+    // Default to Rose Day
+    return 7;
+}
+
+// Initialize game - dynamic based on current day or URL parameter
 function initDayGame() {
-    const dayNumber = 7; // Always Rose Day
-    const game = DAY_GAMES[dayNumber];
+    const dayNumber = getCurrentDayNumber();
+    const game = DAY_GAMES[dayNumber] || DAY_GAMES[7];
     const gameContainer = document.getElementById("day-game");
     
     if (!gameContainer) return;
+    
+    // Clear any existing content
+    gameContainer.innerHTML = "";
     
     gameContainer.innerHTML = `
         <div class="game-header">
@@ -67,8 +102,34 @@ function initDayGame() {
         <div id="game-area" class="game-area"></div>
     `;
     
-    // Initialize Rose Day game
-    initRoseDayGame(game, dayNumber);
+    // Initialize specific game based on day
+    switch(game.type) {
+        case "clicker":
+            if (dayNumber === 7) {
+                initRoseDayGame(game, dayNumber);
+            } else {
+                // Teddy Day (10) or Hug Day (12) - use generic clicker
+                initClickerGame(game, dayNumber);
+            }
+            break;
+        case "find-ring":
+            initFindRingGame(game, dayNumber);
+            break;
+        case "memory":
+            // Chocolate Day (9) or Valentine's Day (14)
+            initMemoryGame(game, dayNumber);
+            break;
+        case "typing":
+            // Promise Day (11)
+            initTypingGame(game, dayNumber);
+            break;
+        case "catch":
+            // Kiss Day (13)
+            initCatchGame(game, dayNumber);
+            break;
+        default:
+            initRoseDayGame(game, dayNumber); // Default fallback
+    }
 }
 
 // Rose Day - Special random popup game
@@ -253,56 +314,93 @@ function createPixelHeart() {
     return `<div class="pixel-heart-art"></div>`;
 }
 
-// Propose Day - Find the Ring
-function initFindGame(game, dayNumber) {
+// Propose Day - Find the Ring Game
+function initFindRingGame(game, dayNumber) {
     const gameArea = document.getElementById("game-area");
-    let found = false;
     let attempts = 0;
+    let found = false;
+    const gridSize = 3; // 3x3 grid = 9 tiles
+    let ringPosition = Math.floor(Math.random() * (gridSize * gridSize));
+    
+    // Decoy items (things that aren't the ring)
+    const decoyItems = ["💌", "🌹", "🕯️", "🎈", "💝", "🎁", "✨", "⭐"];
     
     gameArea.innerHTML = `
-        <div class="find-game">
+        <div class="find-ring-game">
             <div class="score-display pixel-text">Attempts: <span id="attempts">0</span></div>
-            <div class="find-grid" id="find-grid"></div>
-            <p id="game-message" class="pixel-text">Find the hidden ring!</p>
+            <div class="ring-grid" id="ring-grid"></div>
+            <p id="game-message" class="pixel-text">Click the tiles to find the hidden ring! 💍</p>
+            <button id="retry-btn" class="button" style="display: none; margin-top: 15px;">Play Again</button>
         </div>
     `;
     
-    const grid = document.getElementById("find-grid");
+    const grid = document.getElementById("ring-grid");
     const attemptsDisplay = document.getElementById("attempts");
     const message = document.getElementById("game-message");
+    const retryBtn = document.getElementById("retry-btn");
     
-    // Create 3x3 grid
-    const ringPosition = Math.floor(Math.random() * 9);
-    
-    for (let i = 0; i < 9; i++) {
-        const cell = document.createElement("div");
-        cell.className = "find-cell";
-        cell.dataset.index = i;
+    function resetGame() {
+        found = false;
+        attempts = 0;
+        attemptsDisplay.textContent = "0";
+        message.textContent = "Click the tiles to find the hidden ring! 💍";
+        message.style.color = "";
+        retryBtn.style.display = "none";
+        ringPosition = Math.floor(Math.random() * (gridSize * gridSize));
         
-        cell.addEventListener("click", function() {
-            if (found) return;
+        // Clear and recreate grid
+        grid.innerHTML = "";
+        for (let i = 0; i < gridSize * gridSize; i++) {
+            const tile = createTile(i);
+            grid.appendChild(tile);
+        }
+    }
+    
+    function createTile(index) {
+        const tile = document.createElement("div");
+        tile.className = "ring-tile";
+        tile.dataset.index = index;
+        tile.innerHTML = '<div class="tile-back">?</div>';
+        
+        tile.addEventListener("click", function() {
+            if (found || tile.classList.contains("flipped")) return;
             
             attempts++;
             attemptsDisplay.textContent = attempts;
+            tile.classList.add("flipped");
             
-            if (i === ringPosition) {
+            if (index === ringPosition) {
+                // Found the ring!
                 found = true;
-                cell.innerHTML = createPixelRing();
-                cell.style.background = "#FFD700";
-                message.textContent = "You found it! ✨";
+                tile.innerHTML = '<div class="ring-found">💍</div>';
+                tile.classList.add("ring-tile-found");
+                message.innerHTML = '<span style="color: #FFD700; font-size: 1.2em;">✨ You found the ring! 💍✨</span>';
                 message.style.color = "#FFD700";
+                
+                // Show retry button
+                retryBtn.style.display = "inline-block";
+                
+                // Celebrate animation
+                tile.style.animation = "ringCelebration 0.8s ease-out";
             } else {
-                cell.innerHTML = '<div class="pixel-x"></div>';
-                cell.style.opacity = "0.5";
+                // Show decoy item
+                const decoy = decoyItems[index % decoyItems.length];
+                tile.innerHTML = `<div class="tile-content">${decoy}</div>`;
+                tile.classList.add("wrong-tile");
+                message.textContent = "Not here! Keep looking... 💍";
             }
         });
         
-        grid.appendChild(cell);
+        return tile;
     }
-}
-
-function createPixelRing() {
-    return '<div class="pixel-ring-art"></div>';
+    
+    // Create grid
+    for (let i = 0; i < gridSize * gridSize; i++) {
+        grid.appendChild(createTile(i));
+    }
+    
+    // Retry button - restart the game
+    retryBtn.addEventListener("click", resetGame);
 }
 
 // Chocolate Day / Valentine's Day - Memory Game

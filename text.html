@@ -11,21 +11,31 @@
 </head>
 <body>
     <div class="container">
+        <div id="day-navigation" class="day-navigation" style="display: none;">
+            <h2 class="pixel-text">Choose a Day:</h2>
+            <div class="day-links">
+                <a href="text.html?day=7" class="button">🌹 Rose Day</a>
+                <a href="text.html?day=8" class="button">💍 Propose Day</a>
+                <a href="text.html?day=9" class="button">🍫 Chocolate Day</a>
+                <a href="text.html?day=10" class="button">🧸 Teddy Day</a>
+                <a href="text.html?day=11" class="button">🤝 Promise Day</a>
+                <a href="text.html?day=12" class="button">🤗 Hug Day</a>
+                <a href="text.html?day=13" class="button">💋 Kiss Day</a>
+                <a href="text.html?day=14" class="button">❤️ Valentine's Day</a>
+            </div>
+        </div>
         <div class="text-page-container">
-            <h1 class="pixel-text">To my amazing baiko</h1>
-            <p class="fancy-text">I love you, mera shonu monu. I appreciate you deeply, and I am truly proud of how far you havve come and the effort you have put into working on yourself.
-                 You think deeply and you feel deeply too, and that is something I respect so much about you.</p>
-
-            <p class="fancy-text">When I think about you, I don't think of big words or big gestures. I just feel like loving you, caring for you, and being there for you in the ways that matter every day.
-                 I know I have a partner who understands the world really well, and that is something no one can ever take away from you.</p>
-            <p class="fancy-text">You are so beautiful and strong like a rose. I love all parts of you the beautiful and the thorny. I will keep loving you and taking care of you.</p>
-            <div class="gif-container">
+            <h1 class="pixel-text" id="textTitle">To my amazing baiko</h1>
+            <p class="fancy-text" id="textMessage1"></p>
+            <p class="fancy-text" id="textMessage2"></p>
+            <p class="fancy-text" id="textMessage3"></p>
+            <div class="gif-container" id="textGifs">
                 <img src="dudu-giving-flowers-bubu-flowers.gif" alt="Dudu giving flowers to Bubu" class="pixel-image">
             </div>
         </div>
         <div class="buttons">
-            <a href="counter.html" class="button">Back</a>
-            <a href="day.html" class="button">Next</a>
+            <a href="counter.html" class="button" id="textBackButton">Back</a>
+            <a href="day.html" class="button" id="textNextButton">Next</a>
         </div>
      </div>
     <script defer src="script.js"></script>

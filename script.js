@@ -10,6 +10,106 @@ const VALENTINES_WEEK = [
     { name: "Valentine's Day", date: 14, emoji: "❤️", tagline: "Happy Valentine's!" }
 ];
 
+// Text messages for each day
+const DAY_TEXTS = {
+    7: { // Rose Day
+        title: "To my amazing baiko",
+        messages: [
+            "I love you, mera shonu monu. I appreciate you deeply, and I am truly proud of how far you have come and the effort you have put into working on yourself. You think deeply and you feel deeply too, and that is something I respect so much about you.",
+            "When I think about you, I don't think of big words or big gestures. I just feel like loving you, caring for you, and being there for you in the ways that matter every day. I know I have a partner who understands the world really well, and that is something no one can ever take away from you.",
+            "You are so beautiful and strong like a rose. I love all parts of you the beautiful and the thorny. I will keep loving you and taking care of you."
+        ],
+        gifs: ["dudu-giving-flowers-bubu-flowers.gif"]
+    },
+    8: { // Propose Day
+        title: "To my amazing baiko",
+        messages: [
+            "When I think about proposing, I don't think of one big moment. I think about choosing you, again and again, in small and real ways.",
+            "I choose you for who you are today. I choose you for your heart, your depth, and the way you understand the world and obviously for how beautiful you are inside and outside. I feel lucky to have a partner like you who has all these qualities and is so beautiful and so kind, and I don't take that lightly.",
+            "For me choosing you means loving you, caring for you, and standing by you even when things are not easy. It means learning how to be better for you and growing together, slowly and honestly.",
+            "I choose you and will always choose you. And I'm happy doing that."
+        ],
+        gifs: ["bubududu-propose.gif"]
+    },
+    9: { // Chocolate Day
+        title: "To my amazing baiko",
+        messages: [
+            "You are the sweetest person I know. Your kindness, your warmth, and your love make every day brighter.",
+            "I cherish every moment we share together."
+        ],
+        gifs: ["dudu-giving-flowers-bubu-flowers.gif"]
+    },
+    10: { // Teddy Day
+        title: "To my amazing baiko",
+        messages: [
+            "You are my comfort, my safe place, my home. I love cuddling with you and feeling your warmth.",
+            "Thank you for being my teddy bear, my partner, my everything."
+        ],
+        gifs: ["bubududu-teddy.gif"]
+    },
+    11: { // Promise Day
+        title: "To my amazing baiko",
+        messages: [
+            "I promise to love you through everything. I promise to be there for you, to support you, and to grow with you.",
+            "I promise to cherish every moment we have together."
+        ],
+        gifs: ["bubu-dudu-promise.gif"]
+    },
+    12: { // Hug Day
+        title: "To my amazing baiko",
+        messages: [
+            "Your hugs are my favorite thing in the world. They make everything better, they make me feel safe, they make me feel loved.",
+            "I wish I could hug you right now and never let go."
+        ],
+        gifs: ["bubududu-hug.gif"]
+    },
+    13: { // Kiss Day
+        title: "To my amazing baiko",
+        messages: [
+            "Every kiss from you is a reminder of how much I love you. Every moment with you is precious.",
+            "I can't wait to give you all my kisses and all my love."
+        ],
+        gifs: ["bubududu-kiss.gif"]
+    },
+    14: { // Valentine's Day
+        title: "To my amazing baiko",
+        messages: [
+            "Happy Valentine's Day, my love! Today and every day, I celebrate you, I celebrate us, and I celebrate the beautiful love we share.",
+            "You are my everything, my forever, my always. I love you more than words can express."
+        ],
+        gifs: ["dudu-giving-flowers-bubu-flowers.gif"]
+    }
+};
+
+// Get day number from URL parameter or current date
+function getDayFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dayParam = urlParams.get('day');
+    if (dayParam) {
+        const dayNum = parseInt(dayParam);
+        if (dayNum >= 7 && dayNum <= 14) {
+            return dayNum;
+        }
+    }
+    return null;
+}
+
+// Get current day info (with URL parameter support)
+function getCurrentDayInfo() {
+    const urlDay = getDayFromURL();
+    if (urlDay) {
+        return VALENTINES_WEEK.find(day => day.date === urlDay) || VALENTINES_WEEK[0];
+    }
+    
+    const ctx = getValentinesWeekContext();
+    if (ctx.currentDayInfo) {
+        return ctx.currentDayInfo;
+    }
+    
+    // Default to Rose Day if not in Valentine's Week
+    return VALENTINES_WEEK[0];
+}
+
 function getValentinesWeekContext() {
     const now = new Date();
     const currentMonth = now.getMonth();
@@ -161,14 +261,122 @@ document.addEventListener("DOMContentLoaded", function () {
             badgeEl.textContent = "Valentine's Week";
         }
     }
-    // Day page: always show Rose Day for now
+    // Counter page: update Next button to include current day
+    var counterNextButton = document.getElementById("counterNextButton");
+    if (counterNextButton) {
+        var dayInfo = getCurrentDayInfo();
+        counterNextButton.href = "text.html?day=" + dayInfo.date;
+    }
+    
+    // Day page: show current day dynamically
     var dayTitleEl = document.getElementById("dayTitle");
     if (dayTitleEl) {
         var emojiEl = document.getElementById("dayEmoji");
-        // Always Rose Day
-        emojiEl.textContent = "🌹";
-        dayTitleEl.textContent = "Rose Day";
-        document.title = "Rose Day";
+        var dayInfo = getCurrentDayInfo();
+        var backButton = document.getElementById("backButton");
+        
+        emojiEl.textContent = dayInfo.emoji;
+        dayTitleEl.textContent = dayInfo.name;
+        document.title = dayInfo.name;
+        
+        // Update back button to include day parameter if viewing specific day
+        var urlDay = getDayFromURL();
+        if (backButton) {
+            if (urlDay) {
+                backButton.href = "text.html?day=" + urlDay;
+            } else {
+                // If no day parameter, use current day
+                backButton.href = "text.html?day=" + dayInfo.date;
+            }
+        }
+    }
+    
+    // Show day navigation after Feb 14
+    var ctx = getValentinesWeekContext();
+    var now = new Date();
+    var afterValentines = now.getMonth() > 1 || (now.getMonth() === 1 && now.getDate() > 14);
+    
+    if (afterValentines) {
+        var dayNav = document.getElementById("day-navigation");
+        if (dayNav) {
+            dayNav.style.display = "block";
+        }
+    }
+    
+    // Text page: show current day text dynamically
+    var textTitle = document.getElementById("textTitle");
+    var textMessage1 = document.getElementById("textMessage1");
+    var textMessage2 = document.getElementById("textMessage2");
+    var textMessage3 = document.getElementById("textMessage3");
+    var textGifs = document.getElementById("textGifs");
+    
+    if (textTitle) {
+        var dayInfo = getCurrentDayInfo();
+        var dayText = DAY_TEXTS[dayInfo.date] || DAY_TEXTS[7];
+        
+        // Update title
+        textTitle.textContent = dayText.title;
+        
+        // Update messages
+        if (textMessage1 && dayText.messages[0]) {
+            textMessage1.textContent = dayText.messages[0];
+            textMessage1.style.display = "block";
+        }
+        if (textMessage2 && dayText.messages[1]) {
+            textMessage2.textContent = dayText.messages[1];
+            textMessage2.style.display = "block";
+        } else if (textMessage2) {
+            textMessage2.style.display = "none";
+        }
+        if (textMessage3 && dayText.messages[2]) {
+            textMessage3.textContent = dayText.messages[2];
+            textMessage3.style.display = "block";
+        } else if (textMessage3) {
+            textMessage3.style.display = "none";
+        }
+        
+        // Update GIFs
+        if (textGifs && dayText.gifs) {
+            textGifs.innerHTML = "";
+            dayText.gifs.forEach(gif => {
+                var img = document.createElement("img");
+                img.src = gif;
+                img.alt = dayInfo.name;
+                img.className = "pixel-image";
+                textGifs.appendChild(img);
+            });
+        }
+        
+        document.title = dayInfo.name + " - " + dayText.title;
+        
+        // Update navigation buttons to include day parameter
+        var urlDay = getDayFromURL();
+        var textBackButton = document.getElementById("textBackButton");
+        var textNextButton = document.getElementById("textNextButton");
+        
+        if (urlDay) {
+            if (textNextButton) {
+                textNextButton.href = "day.html?day=" + urlDay;
+            }
+        } else {
+            // If no day parameter, use current day
+            var dayInfo = getCurrentDayInfo();
+            if (textNextButton) {
+                textNextButton.href = "day.html?day=" + dayInfo.date;
+            }
+        }
+    }
+    
+    // Show day navigation after Feb 14
+    var ctx = getValentinesWeekContext();
+    var now = new Date();
+    var afterValentines = now.getMonth() > 1 || (now.getMonth() === 1 && now.getDate() > 14);
+    
+    if (afterValentines) {
+        var dayNav = document.getElementById("day-navigation");
+        if (dayNav) {
+            dayNav.style.display = "block";
+        }
     }
 });
 
