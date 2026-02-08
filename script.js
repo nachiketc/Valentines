@@ -98,11 +98,19 @@ function getDayFromURL() {
 function getCurrentDayInfo() {
     const urlDay = getDayFromURL();
     if (urlDay) {
+        // If specifically requesting Propose Day, always return Propose Day
+        if (urlDay === 8) {
+            return VALENTINES_WEEK.find(day => day.date === 8) || VALENTINES_WEEK[1];
+        }
         return VALENTINES_WEEK.find(day => day.date === urlDay) || VALENTINES_WEEK[0];
     }
     
     const ctx = getValentinesWeekContext();
     if (ctx.currentDayInfo) {
+        // If it's Propose Day, always return Propose Day
+        if (ctx.currentDayInfo.date === 8) {
+            return VALENTINES_WEEK.find(day => day.date === 8) || VALENTINES_WEEK[1];
+        }
         return ctx.currentDayInfo;
     }
     

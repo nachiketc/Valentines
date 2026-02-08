@@ -68,6 +68,10 @@ function getDayFromURL() {
 function getCurrentDayNumber() {
     const urlDay = getDayFromURL();
     if (urlDay) {
+        // If specifically requesting Propose Day, always return 8
+        if (urlDay === 8) {
+            return 8;
+        }
         return urlDay;
     }
     
@@ -75,7 +79,12 @@ function getCurrentDayNumber() {
     if (ctx.currentDayInfo) {
         const dayIndex = VALENTINES_WEEK.findIndex(day => day.name === ctx.currentDayInfo.name);
         if (dayIndex !== -1) {
-            return dayIndex + 7; // Days start at 7
+            const dayNum = dayIndex + 7; // Days start at 7
+            // If it's Propose Day, always return 8
+            if (dayNum === 8) {
+                return 8;
+            }
+            return dayNum;
         }
     }
     
