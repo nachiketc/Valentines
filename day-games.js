@@ -65,31 +65,10 @@ function getDayFromURL() {
 }
 
 // Get current day number
+// STATIC: Always return Propose Day (8) for now
 function getCurrentDayNumber() {
-    const urlDay = getDayFromURL();
-    if (urlDay) {
-        // If specifically requesting Propose Day, always return 8
-        if (urlDay === 8) {
-            return 8;
-        }
-        return urlDay;
-    }
-    
-    const ctx = getValentinesWeekContext();
-    if (ctx.currentDayInfo) {
-        const dayIndex = VALENTINES_WEEK.findIndex(day => day.name === ctx.currentDayInfo.name);
-        if (dayIndex !== -1) {
-            const dayNum = dayIndex + 7; // Days start at 7
-            // If it's Propose Day, always return 8
-            if (dayNum === 8) {
-                return 8;
-            }
-            return dayNum;
-        }
-    }
-    
-    // Default to Rose Day
-    return 7;
+    // Always return Propose Day
+    return 8;
 }
 
 // Initialize game - dynamic based on current day or URL parameter
