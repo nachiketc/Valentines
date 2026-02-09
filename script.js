@@ -37,7 +37,7 @@ const DAY_TEXTS = {
             "You are the sweetest person I know. Your kindness, your warmth, and your love make every day brighter.",
             "I cherish every moment we share together."
         ],
-        gifs: ["dudu-giving-flowers-bubu-flowers.gif"]
+        gifs: ["dudu-eating-chocolate-eating.gif"]
     },
     10: { // Teddy Day
         title: "To my amazing baiko",
@@ -95,10 +95,19 @@ function getDayFromURL() {
 }
 
 // Get current day info (with URL parameter support)
-// STATIC: Always return Propose Day for now
 function getCurrentDayInfo() {
-    // Always return Propose Day
-    return VALENTINES_WEEK.find(day => day.date === 8) || VALENTINES_WEEK[1];
+    const urlDay = getDayFromURL();
+    if (urlDay) {
+        return VALENTINES_WEEK.find(day => day.date === urlDay) || VALENTINES_WEEK[0];
+    }
+    
+    const ctx = getValentinesWeekContext();
+    if (ctx.currentDayInfo) {
+        return ctx.currentDayInfo;
+    }
+    
+    // Default to Rose Day if not in Valentine's Week
+    return VALENTINES_WEEK[0];
 }
 
 function getValentinesWeekContext() {
