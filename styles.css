@@ -776,6 +776,11 @@ button {
     user-select: none;
 }
 
+.chocolate-emoji {
+    font-size: 3rem;
+    line-height: 1;
+}
+
 .memory-card:hover {
     background: rgba(248, 187, 217, 0.5);
     transform: scale(1.05);

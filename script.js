@@ -34,8 +34,9 @@ const DAY_TEXTS = {
     9: { // Chocolate Day
         title: "To my amazing baiko",
         messages: [
-            "You are the sweetest person I know. Your kindness, your warmth, and your love make every day brighter.",
-            "I cherish every moment we share together."
+            "I love you mera shonu monu. I love having you in my life. You make me feel better and I can't go have a normal day without checking up on you. Chocolate feels like a sweet indulgence but dark chocolate can be very healthy for you. Talking to you makes me feel warm and comfortable, even with the bitterness that comes out sometimes. I like dark chocolate if you have noticed.",
+            "People get addicted to chocolate, I feel I am addicted to talking to you. I love talking to you, listening to you, even sharing silence with you feels relaxing, like the times when we are doing our own work and we stay silent on the call together.",
+            "You are not just there for happy moments. You make normal days better too, without trying too hard. That's what you are to me."
         ],
         gifs: ["dudu-eating-chocolate-eating.gif"]
     },
@@ -95,19 +96,10 @@ function getDayFromURL() {
 }
 
 // Get current day info (with URL parameter support)
+// STATIC: Always return Chocolate Day for now
 function getCurrentDayInfo() {
-    const urlDay = getDayFromURL();
-    if (urlDay) {
-        return VALENTINES_WEEK.find(day => day.date === urlDay) || VALENTINES_WEEK[0];
-    }
-    
-    const ctx = getValentinesWeekContext();
-    if (ctx.currentDayInfo) {
-        return ctx.currentDayInfo;
-    }
-    
-    // Default to Rose Day if not in Valentine's Week
-    return VALENTINES_WEEK[0];
+    // Always return Chocolate Day
+    return VALENTINES_WEEK.find(day => day.date === 9) || VALENTINES_WEEK[2];
 }
 
 function getValentinesWeekContext() {

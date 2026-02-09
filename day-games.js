@@ -65,22 +65,10 @@ function getDayFromURL() {
 }
 
 // Get current day number
+// STATIC: Always return Chocolate Day (9) for now
 function getCurrentDayNumber() {
-    const urlDay = getDayFromURL();
-    if (urlDay) {
-        return urlDay;
-    }
-    
-    const ctx = getValentinesWeekContext();
-    if (ctx.currentDayInfo) {
-        const dayIndex = VALENTINES_WEEK.findIndex(day => day.name === ctx.currentDayInfo.name);
-        if (dayIndex !== -1) {
-            return dayIndex + 7; // Days start at 7
-        }
-    }
-    
-    // Default to Rose Day
-    return 7;
+    // Always return Chocolate Day
+    return 9;
 }
 
 // Initialize game - dynamic based on current day or URL parameter
@@ -407,7 +395,7 @@ function initFindRingGame(game, dayNumber) {
 function initMemoryGame(game, dayNumber) {
     const gameArea = document.getElementById("game-area");
     const items = dayNumber === 9 
-        ? ["chocolate", "candy", "lollipop", "cookie"]
+        ? ["🍫", "🍬", "🍭", "🍪"]  // Chocolate emojis
         : ["heart", "heart2", "heart3", "heart4"];
     const cards = [...items, ...items].sort(() => Math.random() - 0.5);
     let flipped = [];
@@ -425,7 +413,8 @@ function initMemoryGame(game, dayNumber) {
     
     function getPixelArt(item) {
         if (dayNumber === 9) {
-            return `<div class="pixel-${item}-art"></div>`;
+            // Use emojis for Chocolate Day
+            return `<div class="chocolate-emoji">${item}</div>`;
         } else {
             return `<div class="pixel-heart-art pixel-heart-${item}"></div>`;
         }
