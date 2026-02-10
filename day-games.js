@@ -20,9 +20,9 @@ const DAY_GAMES = {
         emoji: "🍫"
     },
     10: { // Teddy Day
-        name: "Teddy Cuddle",
-        description: "Click to give the teddy a hug!",
-        type: "clicker",
+        name: "Give the Teddy Hugs",
+        description: "Click the teddy to give it hugs!",
+        type: "teddy-hugs",
         emoji: "🧸"
     },
     11: { // Promise Day
@@ -65,10 +65,10 @@ function getDayFromURL() {
 }
 
 // Get current day number
-// STATIC: Always return Chocolate Day (9) for now
+// STATIC: Always return Teddy Day (10) for now
 function getCurrentDayNumber() {
-    // Always return Chocolate Day
-    return 9;
+    // Always return Teddy Day
+    return 10;
 }
 
 // Initialize game - dynamic based on current day or URL parameter
@@ -95,10 +95,15 @@ function initDayGame() {
         case "clicker":
             if (dayNumber === 7) {
                 initRoseDayGame(game, dayNumber);
+            } else if (dayNumber === 12) {
+                // Hug Day - use generic clicker
+                initClickerGame(game, dayNumber);
             } else {
-                // Teddy Day (10) or Hug Day (12) - use generic clicker
                 initClickerGame(game, dayNumber);
             }
+            break;
+        case "teddy-hugs":
+            initTeddyHugsGame(game, dayNumber);
             break;
         case "find-ring":
             initFindRingGame(game, dayNumber);
@@ -260,7 +265,6 @@ function initClickerGame(game, dayNumber) {
     let score = 0;
     
     const pixelArts = {
-        10: createPixelTeddy(), // Teddy Day
         12: createPixelHug()    // Hug Day
     };
     
@@ -289,11 +293,572 @@ function initClickerGame(game, dayNumber) {
     });
 }
 
-// Pixel art creation functions
-function createPixelTeddy() {
-    return `<div class="pixel-teddy-art"></div>`;
+// Teddy Day - Give the Teddy Hugs Game
+function initTeddyHugsGame(game, dayNumber) {
+    const gameArea = document.getElementById("game-area");
+    let hugs = 0;
+    let gameActive = true;
+    let gameDuration = 30000; // 30 seconds
+    let startTime = Date.now();
+    let timerInterval;
+    
+    gameArea.innerHTML = `
+        <div class="teddy-hugs-game">
+            <div class="score-display pixel-text">Hugs Given: <span id="hug-count">0</span></div>
+            <div class="time-display pixel-text">Time: <span id="time-left">30</span>s</div>
+            <div class="teddy-hug-container" id="teddy-hug-container">
+                <img src="bear-Photoroom.png" alt="Bear" class="huggable-teddy" id="huggable-teddy">
+            </div>
+            <p class="pixel-text" id="game-message">Click the teddy to give it hugs! 💕</p>
+            <button id="retry-btn" class="button" style="display: none; margin-top: 15px;">Play Again</button>
+        </div>
+    `;
+    
+    const teddy = document.getElementById("huggable-teddy");
+    const hugCount = document.getElementById("hug-count");
+    const timeLeft = document.getElementById("time-left");
+    const message = document.getElementById("game-message");
+    const retryBtn = document.getElementById("retry-btn");
+    
+    function startGame() {
+        hugs = 0;
+        gameActive = true;
+        startTime = Date.now();
+        hugCount.textContent = "0";
+        retryBtn.style.display = "none";
+        message.textContent = "Click the teddy to give it hugs! 💕";
+        message.style.color = "";
+        
+        // Timer
+        timerInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, Math.ceil((gameDuration - elapsed) / 1000));
+            timeLeft.textContent = remaining;
+            
+            if (remaining === 0) {
+                gameActive = false;
+                clearInterval(timerInterval);
+                retryBtn.style.display = "inline-block";
+                setTimeout(() => {
+                    alert(`Time's up! You gave the teddy ${hugs} hugs! 🧸`);
+                }, 500);
+            }
+        }, 100);
+    }
+    
+    function giveHug() {
+        if (!gameActive) return;
+        
+        hugs++;
+        hugCount.textContent = hugs;
+        
+        // Shake animation - reset first to ensure it triggers
+        teddy.style.animation = "none";
+        // Force reflow
+        void teddy.offsetWidth;
+        teddy.style.animation = "teddyShake 0.6s ease-out";
+        setTimeout(() => {
+            teddy.style.animation = "none";
+        }, 600);
+        
+        // Special messages at milestones
+        if (hugs === 10) {
+            message.textContent = "10 hugs! The teddy is so happy! 🧸💕";
+            message.style.color = "#880E4F";
+        } else if (hugs === 25) {
+            message.textContent = "25 hugs! The teddy loves you! 🧸❤️";
+            message.style.color = "#AD1457";
+        } else if (hugs === 50) {
+            message.textContent = "50 hugs! The teddy is overjoyed! 🧸💖";
+            message.style.color = "#FFD700";
+            teddy.style.animation = "teddyBigShake 1s ease-out";
+            setTimeout(() => {
+                teddy.style.animation = "none";
+            }, 1000);
+        } else if (hugs === 100) {
+            message.textContent = "100 hugs! The teddy gives you a giant hug back! 🧸💕💕💕";
+            message.style.color = "#FFD700";
+            teddy.style.animation = "teddyGiantShake 1.5s ease-out";
+            setTimeout(() => {
+                teddy.style.animation = "none";
+            }, 1500);
+        } else if (hugs % 5 === 0) {
+            message.textContent = `${hugs} hugs! Keep going! 🧸`;
+            message.style.color = "#880E4F";
+        }
+    }
+    
+    teddy.addEventListener("click", giveHug);
+    
+    // Retry button
+    retryBtn.addEventListener("click", function() {
+        clearInterval(timerInterval);
+        startGame();
+    });
+    
+    // Start the game
+    startGame();
 }
 
+// Old catch game - keeping for reference
+function initCatchTeddyGame_OLD(game, dayNumber) {
+    const gameArea = document.getElementById("game-area");
+    let score = 0;
+    let gameInterval = null;
+    let timerInterval = null;
+    let gameDuration = 30000; // 30 seconds
+    let gameActive = false;
+    let mouseMoveHandler = null;
+    
+    gameArea.innerHTML = `
+        <div class="catch-teddy-game">
+            <div class="score-display pixel-text">Teddies Caught: <span id="teddy-score">0</span></div>
+            <div class="time-display pixel-text">Time: <span id="time-left">30</span>s</div>
+            <div class="catch-area" id="catch-area">
+                <div class="basket" id="basket">🧺</div>
+            </div>
+            <p class="pixel-text">Move your mouse to catch the teddies! 🧸</p>
+            <button id="retry-btn" class="button" style="display: none; margin-top: 15px;">Play Again</button>
+        </div>
+    `;
+    
+    const catchArea = document.getElementById("catch-area");
+    const basket = document.getElementById("basket");
+    const scoreDisplay = document.getElementById("teddy-score");
+    const timeLeft = document.getElementById("time-left");
+    const retryBtn = document.getElementById("retry-btn");
+    
+    function startGame() {
+        // Clear previous intervals
+        if (gameInterval) clearInterval(gameInterval);
+        if (timerInterval) clearInterval(timerInterval);
+        
+        score = 0;
+        gameActive = true;
+        const startTime = Date.now();
+        scoreDisplay.textContent = "0";
+        retryBtn.style.display = "none";
+        
+        // Clear any existing teddies
+        const existingTeddies = catchArea.querySelectorAll(".falling-teddy");
+        existingTeddies.forEach(teddy => teddy.remove());
+        
+        // Remove old event listener if exists
+        if (mouseMoveHandler) {
+            catchArea.removeEventListener("mousemove", mouseMoveHandler);
+        }
+        
+        // Move basket with mouse
+        let basketX = catchArea.offsetWidth / 2;
+        mouseMoveHandler = function(e) {
+            const rect = catchArea.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            basketX = Math.max(30, Math.min(mouseX, rect.width - 30));
+            basket.style.left = (basketX - 30) + "px";
+            basket.style.transform = "none";
+        };
+        catchArea.addEventListener("mousemove", mouseMoveHandler);
+        
+        // Initialize basket position
+        basket.style.left = (catchArea.offsetWidth / 2 - 30) + "px";
+        basket.style.transform = "none";
+        
+        // Create falling teddies
+        function createTeddy() {
+            if (!gameActive) return;
+            
+            const teddy = document.createElement("div");
+            teddy.className = "falling-teddy";
+            teddy.textContent = "🧸";
+            const maxLeft = Math.max(0, catchArea.offsetWidth - 60);
+            teddy.style.left = Math.random() * maxLeft + "px";
+            teddy.style.top = "0px";
+            catchArea.appendChild(teddy);
+            
+            let position = 0;
+            const fall = setInterval(() => {
+                if (!gameActive) {
+                    clearInterval(fall);
+                    if (teddy.parentNode) teddy.remove();
+                    return;
+                }
+                
+                position += 3;
+                teddy.style.top = position + "px";
+                
+                if (position > catchArea.offsetHeight) {
+                    // Missed - remove teddy
+                    if (teddy.parentNode) teddy.remove();
+                    clearInterval(fall);
+                    return;
+                }
+                
+                // Check collision
+                const teddyRect = teddy.getBoundingClientRect();
+                const basketRect = basket.getBoundingClientRect();
+                
+                // Simple collision check
+                if (teddyRect.bottom >= basketRect.top - 10 && 
+                    teddyRect.top <= basketRect.bottom &&
+                    teddyRect.left < basketRect.right &&
+                    teddyRect.right > basketRect.left) {
+                    // Caught!
+                    score++;
+                    scoreDisplay.textContent = score;
+                    if (teddy.parentNode) teddy.remove();
+                    clearInterval(fall);
+                    
+                    // Celebration animation
+                    basket.style.animation = "basketCatch 0.3s ease-out";
+                    setTimeout(() => {
+                        basket.style.animation = "none";
+                    }, 300);
+                }
+            }, 20);
+        }
+        
+        // Create teddies periodically
+        gameInterval = setInterval(createTeddy, 800);
+        
+        // Create first teddy immediately
+        setTimeout(createTeddy, 500);
+        
+        // Timer
+        timerInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, Math.ceil((gameDuration - elapsed) / 1000));
+            timeLeft.textContent = remaining;
+            
+            if (remaining === 0) {
+                gameActive = false;
+                clearInterval(gameInterval);
+                clearInterval(timerInterval);
+                gameInterval = null;
+                timerInterval = null;
+                retryBtn.style.display = "inline-block";
+                setTimeout(() => {
+                    alert(`Time's up! You caught ${score} teddies! 🧸`);
+                }, 500);
+            }
+        }, 100);
+    }
+    
+    // Retry button
+    retryBtn.addEventListener("click", function() {
+        startGame();
+    });
+    
+    // Start the game
+    startGame();
+}
+
+
+// Teddy Day - Collect Teddies Game
+function initCollectTeddyGame(game, dayNumber) {
+    const gameArea = document.getElementById("game-area");
+    let score = 0;
+    let gameInterval;
+    let timerInterval;
+    let gameDuration = 30000; // 30 seconds
+    let startTime = Date.now();
+    let gameActive = true;
+    
+    gameArea.innerHTML = `
+        <div class="collect-teddy-game">
+            <div class="score-display pixel-text">Teddies Collected: <span id="teddy-score">0</span></div>
+            <div class="time-display pixel-text">Time: <span id="time-left">30</span>s</div>
+            <div class="teddy-play-area" id="teddy-play-area"></div>
+            <p class="pixel-text" style="margin-top: 20px;">Click the teddies as they appear! 🧸</p>
+            <button id="retry-btn" class="button" style="display: none; margin-top: 15px;">Play Again</button>
+        </div>
+    `;
+    
+    const playArea = document.getElementById("teddy-play-area");
+    const scoreDisplay = document.getElementById("teddy-score");
+    const timeLeft = document.getElementById("time-left");
+    const retryBtn = document.getElementById("retry-btn");
+    
+    function startGame() {
+        score = 0;
+        gameActive = true;
+        startTime = Date.now();
+        scoreDisplay.textContent = "0";
+        retryBtn.style.display = "none";
+        
+        // Clear any existing teddies
+        playArea.innerHTML = "";
+        
+        function createTeddy() {
+            if (!gameActive) return;
+            
+            const teddy = document.createElement("div");
+            teddy.className = "collectible-teddy";
+            teddy.textContent = "🧸";
+            teddy.style.left = Math.random() * (playArea.offsetWidth - 80) + "px";
+            teddy.style.top = Math.random() * (playArea.offsetHeight - 80) + "px";
+            
+            teddy.addEventListener("click", function() {
+                if (!gameActive) return;
+                
+                score++;
+                scoreDisplay.textContent = score;
+                
+                // Animate collection
+                teddy.style.animation = "teddyCollected 0.5s ease-out";
+                teddy.style.transform = "scale(1.5)";
+                teddy.style.opacity = "0";
+                
+                setTimeout(() => {
+                    if (teddy.parentNode) teddy.remove();
+                }, 500);
+            });
+            
+            playArea.appendChild(teddy);
+            
+            // Auto-remove after 3 seconds if not clicked
+            setTimeout(() => {
+                if (teddy.parentNode && !teddy.classList.contains("collected")) {
+                    teddy.style.transition = "all 0.5s";
+                    teddy.style.opacity = "0";
+                    teddy.style.transform = "scale(0.5)";
+                    setTimeout(() => {
+                        if (teddy.parentNode) teddy.remove();
+                    }, 500);
+                }
+            }, 3000);
+        }
+        
+        // Create teddies periodically
+        gameInterval = setInterval(createTeddy, 1200);
+        
+        // Create first teddy immediately
+        setTimeout(createTeddy, 500);
+        
+        // Timer
+        timerInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, Math.ceil((gameDuration - elapsed) / 1000));
+            timeLeft.textContent = remaining;
+            
+            if (remaining === 0) {
+                gameActive = false;
+                clearInterval(gameInterval);
+                clearInterval(timerInterval);
+                retryBtn.style.display = "inline-block";
+                setTimeout(() => {
+                    alert(`Time's up! You collected ${score} teddies! 🧸`);
+                }, 500);
+            }
+        }, 100);
+    }
+    
+    // Retry button
+    retryBtn.addEventListener("click", function() {
+        clearInterval(gameInterval);
+        clearInterval(timerInterval);
+        startGame();
+    });
+    
+    startGame();
+}
+
+// Old growing teddy function - keeping for reference
+function initGrowingTeddyGame_OLD(game, dayNumber) {
+    const gameArea = document.getElementById("game-area");
+    let hugs = 0;
+    let currentSize = 1;
+    const sizeIncrement = 0.1;
+    const maxSize = 3;
+    
+    gameArea.innerHTML = `
+        <div class="growing-teddy-game">
+            <div class="score-display pixel-text">Hugs Given: <span id="hug-count">0</span></div>
+            <div class="size-display pixel-text">Size: <span id="size-display">100%</span></div>
+            <div class="teddy-container" id="teddy-container">
+                <div class="growing-teddy" id="growing-teddy">🧸</div>
+                <div class="hug-hearts" id="hug-hearts"></div>
+            </div>
+            <p class="pixel-text" id="game-message">Click the teddy to give it a hug! 💕</p>
+            <button id="reset-btn" class="button" style="margin-top: 15px;">Reset</button>
+        </div>
+    `;
+    
+    const teddy = document.getElementById("growing-teddy");
+    const hugCount = document.getElementById("hug-count");
+    const sizeDisplay = document.getElementById("size-display");
+    const message = document.getElementById("game-message");
+    const hugHearts = document.getElementById("hug-hearts");
+    const resetBtn = document.getElementById("reset-btn");
+    
+    function giveHug() {
+        hugs++;
+        hugCount.textContent = hugs;
+        
+        // Grow the teddy
+        if (currentSize < maxSize) {
+            currentSize += sizeIncrement;
+            const sizePercent = Math.round(currentSize * 100);
+            teddy.style.transform = `scale(${currentSize})`;
+            teddy.style.setProperty('--current-scale', currentSize);
+            sizeDisplay.textContent = sizePercent + "%";
+        }
+        
+        // Animate teddy
+        teddy.style.animation = "teddyHugAnimation 0.6s ease-out";
+        setTimeout(() => {
+            teddy.style.animation = "none";
+        }, 600);
+        
+        // Create floating hearts
+        for (let i = 0; i < 3; i++) {
+            const heart = document.createElement("div");
+            heart.className = "floating-heart";
+            heart.textContent = i === 0 ? "💕" : (i === 1 ? "❤️" : "💖");
+            heart.style.left = (50 + (Math.random() - 0.5) * 40) + "%";
+            heart.style.animationDelay = (i * 0.1) + "s";
+            hugHearts.appendChild(heart);
+            
+            setTimeout(() => {
+                if (heart.parentNode) heart.remove();
+            }, 2000);
+        }
+        
+        // Special messages at milestones
+        if (hugs === 10) {
+            message.textContent = "10 hugs! The teddy is getting bigger! 🧸💕";
+            message.style.color = "#880E4F";
+        } else if (hugs === 25) {
+            message.textContent = "25 hugs! The teddy loves you! 🧸❤️";
+            message.style.color = "#AD1457";
+        } else if (hugs === 50) {
+            message.textContent = "50 hugs! The teddy is huge now! 🧸💖";
+            message.style.color = "#FFD700";
+            // Special big hug animation
+            teddy.style.animation = "bigHug 1s ease-out";
+            setTimeout(() => {
+                teddy.style.animation = "none";
+            }, 1000);
+        } else if (hugs === 100) {
+            message.textContent = "100 hugs! The teddy gives you a giant hug back! 🧸💕💕💕";
+            message.style.color = "#FFD700";
+            teddy.style.animation = "giantHug 1.5s ease-out";
+            setTimeout(() => {
+                teddy.style.animation = "none";
+            }, 1500);
+        } else if (hugs % 5 === 0) {
+            message.textContent = `${hugs} hugs! Keep going! 🧸`;
+            message.style.color = "#880E4F";
+        }
+    }
+    
+    teddy.addEventListener("click", giveHug);
+    
+    // Reset button
+    resetBtn.addEventListener("click", function() {
+        hugs = 0;
+        currentSize = 1;
+        hugCount.textContent = "0";
+        sizeDisplay.textContent = "100%";
+        teddy.style.transform = "scale(1)";
+        teddy.style.setProperty('--current-scale', 1);
+        message.textContent = "Click the teddy to give it a hug! 💕";
+        message.style.color = "";
+        hugHearts.innerHTML = "";
+    });
+}
+
+// Teddy Day - Teddy Stack Game
+function initTeddyStackGame(game, dayNumber) {
+    const gameArea = document.getElementById("game-area");
+    let stackHeight = 0;
+    let gameActive = true;
+    let fallInterval;
+    
+    gameArea.innerHTML = `
+        <div class="teddy-stack-game">
+            <div class="score-display pixel-text">Stack Height: <span id="stack-height">0</span> teddies</div>
+            <div class="stack-area" id="stack-area">
+                <div class="base-platform"></div>
+            </div>
+            <p class="pixel-text" style="margin-top: 20px;">Click anywhere to drop a teddy! 🧸</p>
+            <button id="reset-btn" class="button" style="margin-top: 15px;">Reset Stack</button>
+        </div>
+    `;
+    
+    const stackArea = document.getElementById("stack-area");
+    const stackHeightDisplay = document.getElementById("stack-height");
+    const resetBtn = document.getElementById("reset-btn");
+    
+    let currentTeddy = null;
+    let isFalling = false;
+    let stackTeddies = [];
+    
+    function createFallingTeddy() {
+        if (isFalling || !gameActive) return;
+        
+        isFalling = true;
+        currentTeddy = document.createElement("div");
+        currentTeddy.className = "falling-stack-teddy";
+        currentTeddy.textContent = "🧸";
+        currentTeddy.style.left = Math.random() * (stackArea.offsetWidth - 80) + "px";
+        currentTeddy.style.top = "0px";
+        stackArea.appendChild(currentTeddy);
+        
+        let position = 0;
+        const baseHeight = stackArea.offsetHeight - 40;
+        const fallSpeed = 2;
+        
+        fallInterval = setInterval(() => {
+            if (!gameActive || !currentTeddy) {
+                clearInterval(fallInterval);
+                return;
+            }
+            
+            position += fallSpeed;
+            const targetY = baseHeight - (stackTeddies.length * 60);
+            
+            if (position >= targetY) {
+                // Landed on stack
+                currentTeddy.style.top = targetY + "px";
+                currentTeddy.classList.add("stacked-teddy");
+                stackTeddies.push(currentTeddy);
+                stackHeight++;
+                stackHeightDisplay.textContent = stackHeight;
+                currentTeddy = null;
+                isFalling = false;
+                clearInterval(fallInterval);
+            } else {
+                currentTeddy.style.top = position + "px";
+            }
+        }, 16);
+    }
+    
+    // Click to drop teddy
+    stackArea.addEventListener("click", function(e) {
+        if (isFalling || !gameActive) return;
+        createFallingTeddy();
+    });
+    
+    // Reset button
+    resetBtn.addEventListener("click", function() {
+        gameActive = false;
+        if (fallInterval) clearInterval(fallInterval);
+        if (currentTeddy && currentTeddy.parentNode) {
+            currentTeddy.remove();
+        }
+        stackTeddies.forEach(teddy => {
+            if (teddy.parentNode) teddy.remove();
+        });
+        stackTeddies = [];
+        stackHeight = 0;
+        stackHeightDisplay.textContent = "0";
+        isFalling = false;
+        currentTeddy = null;
+        gameActive = true;
+    });
+}
+
+// Pixel art creation functions
 function createPixelHug() {
     return `<div class="pixel-hug-art"></div>`;
 }

@@ -749,6 +749,157 @@ button {
     }
 }
 
+/* Give the Teddy Hugs Game */
+.teddy-hugs-game {
+    text-align: center;
+    padding: 20px;
+}
+
+.teddy-hug-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    margin: 30px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFF8F0;
+    border-radius: 8px;
+}
+
+.huggable-teddy {
+    width: 300px;
+    height: auto;
+    max-width: 50%;
+    max-height: 40vh;
+    min-width: 200px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    z-index: 2;
+    transform-origin: center center;
+    object-fit: contain;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    background: #FFF8F0;
+    border-radius: 8px;
+    transition: filter 0.2s;
+}
+
+.huggable-teddy:hover {
+    filter: brightness(1.1);
+}
+
+@keyframes teddyShake {
+    0%, 100% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+    }
+    10% {
+        transform: translateX(-15px) translateY(-8px) rotate(-8deg);
+    }
+    20% {
+        transform: translateX(15px) translateY(8px) rotate(8deg);
+    }
+    30% {
+        transform: translateX(-12px) translateY(-6px) rotate(-6deg);
+    }
+    40% {
+        transform: translateX(12px) translateY(6px) rotate(6deg);
+    }
+    50% {
+        transform: translateX(-10px) translateY(-4px) rotate(-4deg);
+    }
+    60% {
+        transform: translateX(10px) translateY(4px) rotate(4deg);
+    }
+    70% {
+        transform: translateX(-6px) translateY(-2px) rotate(-2deg);
+    }
+    80% {
+        transform: translateX(6px) translateY(2px) rotate(2deg);
+    }
+    90% {
+        transform: translateX(-3px) translateY(0) rotate(0deg);
+    }
+}
+
+@keyframes teddyBigShake {
+    0%, 100% {
+        transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    }
+    10% {
+        transform: translateX(-15px) translateY(-8px) rotate(-8deg) scale(1.1);
+    }
+    20% {
+        transform: translateX(15px) translateY(8px) rotate(8deg) scale(1.1);
+    }
+    30% {
+        transform: translateX(-12px) translateY(-6px) rotate(-6deg) scale(1.05);
+    }
+    40% {
+        transform: translateX(12px) translateY(6px) rotate(6deg) scale(1.05);
+    }
+    50% {
+        transform: translateX(-8px) translateY(-4px) rotate(-4deg) scale(1.02);
+    }
+    60% {
+        transform: translateX(8px) translateY(4px) rotate(4deg) scale(1.02);
+    }
+    70% {
+        transform: translateX(-5px) translateY(-2px) rotate(-2deg) scale(1.01);
+    }
+    80% {
+        transform: translateX(5px) translateY(2px) rotate(2deg) scale(1.01);
+    }
+    90% {
+        transform: translateX(-2px) translateY(0) rotate(0deg) scale(1);
+    }
+}
+
+@keyframes teddyGiantShake {
+    0%, 100% {
+        transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    }
+    8% {
+        transform: translateX(-20px) translateY(-10px) rotate(-12deg) scale(1.15);
+    }
+    16% {
+        transform: translateX(20px) translateY(10px) rotate(12deg) scale(1.15);
+    }
+    24% {
+        transform: translateX(-18px) translateY(-9px) rotate(-10deg) scale(1.1);
+    }
+    32% {
+        transform: translateX(18px) translateY(9px) rotate(10deg) scale(1.1);
+    }
+    40% {
+        transform: translateX(-15px) translateY(-7px) rotate(-8deg) scale(1.08);
+    }
+    48% {
+        transform: translateX(15px) translateY(7px) rotate(8deg) scale(1.08);
+    }
+    56% {
+        transform: translateX(-12px) translateY(-5px) rotate(-6deg) scale(1.05);
+    }
+    64% {
+        transform: translateX(12px) translateY(5px) rotate(6deg) scale(1.05);
+    }
+    72% {
+        transform: translateX(-8px) translateY(-3px) rotate(-4deg) scale(1.02);
+    }
+    80% {
+        transform: translateX(8px) translateY(3px) rotate(4deg) scale(1.02);
+    }
+    88% {
+        transform: translateX(-4px) translateY(-1px) rotate(-2deg) scale(1.01);
+    }
+    96% {
+        transform: translateX(4px) translateY(1px) rotate(2deg) scale(1.01);
+    }
+}
+
 /* Memory Game */
 .memory-game {
     text-align: center;

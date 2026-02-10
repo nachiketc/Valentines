@@ -43,9 +43,11 @@ const DAY_TEXTS = {
     10: { // Teddy Day
         title: "To my amazing baiko",
         messages: [
-            "You are my comfort, my safe place, my home. I love cuddling with you and feeling your warmth.",
-            "Thank you for being my teddy bear, my partner, my everything."
-        ],
+            "I love you, mera shonu monu. Teddy Day makes me think about comfort and safety, and about being there for someone in a soft and steady way.",
+            "I know I don't always express myself well, and sometimes my fear comes out the wrong way. I'm learning that what matters more is showing up gently, without defensiveness.",
+            "I want to be your teddy in that sense I want to be someone you can lean on, talk to, or sit quietly with, without feeling judged or pressured.",
+            "Your presence already brings me that comfort. I want to offer the same to you, in my own way."
+      ],
         gifs: ["bubududu-teddy.gif"]
     },
     11: { // Promise Day
@@ -96,10 +98,10 @@ function getDayFromURL() {
 }
 
 // Get current day info (with URL parameter support)
-// STATIC: Always return Chocolate Day for now
+// STATIC: Always return Teddy Day for now
 function getCurrentDayInfo() {
-    // Always return Chocolate Day
-    return VALENTINES_WEEK.find(day => day.date === 9) || VALENTINES_WEEK[2];
+    // Always return Teddy Day
+    return VALENTINES_WEEK.find(day => day.date === 10) || VALENTINES_WEEK[3];
 }
 
 function getValentinesWeekContext() {
